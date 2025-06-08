@@ -23,7 +23,5 @@ jobs:
       run: |
         echo $SSH_KEY > actions-poc.pem
         chmod 400 actions-poc.pem
-        ssh -i "actions-poc.pem" $HOST_ADDRESS
-        cd poc-actions
-        echo "exporting files" > output.txt
+        ssh -o StrictHostKeyChecking=no -i "actions-poc.pem" $HOST_ADDRESS "cd poc-actions && echo 'exporting files' > output.txt"
         
