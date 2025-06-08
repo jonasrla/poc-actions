@@ -1,4 +1,4 @@
-name: Django CI
+name: Django CD
 
 on:
   push:
@@ -10,21 +10,22 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    strategy:
-      max-parallel: 4
-      matrix:
-        python-version: [3.13]
 
     steps:
     - uses: actions/checkout@v4
-    - name: Set up Python ${{ matrix.python-version }}
+    - name: Set up Python 3.13
       uses: actions/setup-python@v3
       with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install Dependencies
+        python-version: 3.13
+    - name: Export Files
       run: |
-        python -m pip install --upgrade pip
-        pip install uv
-    - name: Run Tests
-      run: |
-        uv run manage.py test
+        echo $SSH_KEY > actions-poc.pem
+        chmod 400 actions-poc.pem
+        ssh -i "actions-poc.pem" $HOST_ADDRESS
+        cd poc-actions
+        git pull main
+        uv run manage.py collectstatic --noinput
+        uv run manage.py migrate
+        sudo systemctl restart nginx
+        sudo systemctl restart gunicorn
+
