@@ -8,7 +8,9 @@ on:
 
 jobs:
   build:
-
+    env:
+      HOST_ADDRESS: ${{ secrets.HOST_ADDRESS }}
+      SSH_KEY: ${{ secrets.SSH_KEY }}
     runs-on: ubuntu-latest
 
     steps:
@@ -19,5 +21,13 @@ jobs:
         python-version: 3.13
     - name: Export Files
       run: |
-        echo $HOST_ADDRESS
+        echo $SSH_KEY > actions-poc.pem
+        chmod 400 actions-poc.pem
+        ssh -i "actions-poc.pem" $HOST_ADDRESS
+        cd poc-actions
+        git pull main
+        uv run manage.py collectstatic --noinput
+        uv run manage.py migrate
+        sudo systemctl restart nginx
+        sudo systemctl restart gunicorn
         
