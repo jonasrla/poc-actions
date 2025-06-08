@@ -25,9 +25,5 @@ jobs:
         chmod 400 actions-poc.pem
         ssh -i "actions-poc.pem" $HOST_ADDRESS
         cd poc-actions
-        git pull main
-        uv run manage.py collectstatic --noinput
-        uv run manage.py migrate
-        sudo systemctl restart nginx
-        sudo systemctl restart gunicorn
+        echo "exporting files" > output.txt
         
