@@ -1,27 +1,16 @@
-name: Django CD
-
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-
+name: Remote SSH Command
+on: [push]
 jobs:
   build:
-    env:
-      HOST_ADDRESS: ${{ secrets.HOST_ADDRESS }}
-      SSH_KEY: ${{ secrets.SSH_KEY }}
+    name: Build
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python 3.13
-      uses: actions/setup-python@v3
-      with:
-        python-version: 3.13
-    - name: Export Files
-      run: |
-        echo $SSH_KEY > actions-poc.pem
-        chmod 400 actions-poc.pem
-        ssh -o StrictHostKeyChecking=no -i "actions-poc.pem" $HOST_ADDRESS "cd poc-actions && echo 'exporting files' > output.txt"
-        
+      - name: Execute remote SSH commands using password
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.HOST_ADDRESS }}
+          username: ec2-user
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd /home/ec2-user/poc-actions
+            echo "Running remote commands" > output.txt
