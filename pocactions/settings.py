@@ -11,21 +11,24 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
-
+from dotenv import load_dotenv
+import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+load_dotenv(BASE_DIR / '.env')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-2h%w!*gx*5qs^c700p(jk9y7z3n5izkhf61p$*c%%ri%e#jmns'
+print(os.getenv('DEBUG'))
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False').lower() in ('true', '1', 'yes')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
 
 
 # Application definition
@@ -120,3 +123,9 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+CSRF_COOKIE_SECURE = True if os.getenv('CSRF_COOKIE_SECURE', 'False').lower() in ('true', '1', 'yes') else False
+SESSION_COOKIE_SECURE = True if os.getenv('SESSION_COOKIE_SECURE', 'False').lower() in ('true', '1', 'yes') else False
+SECURE_SSL_REDIRECT = True if os.getenv('SECURE_SSL_REDIRECT', 'False').lower() in ('true', '1', 'yes') else False
+SECURE_HSTS_SECONDS = int(os.getenv('SECURE_HSTS_SECONDS', '0'))
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True if os.getenv('SECURE_HSTS_INCLUDE_SUBDOMAINS', 'False').lower() in ('true', '1', 'yes') else False
+SECURE_HSTS_PRELOAD = True if os.getenv('SECURE_HSTS_PRELOAD', 'False').lower() in ('true', '1', 'yes') else False
