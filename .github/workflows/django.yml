@@ -13,4 +13,8 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             cd /home/ec2-user/poc-actions
-            echo "Running remote commands" > output.txt
+            git pull
+            uv run manage.py migrate
+            uv run manage.py collectstatic --noinput
+            sudo systemctl restart gunicorn
+            sudo systemctl restart nginx
